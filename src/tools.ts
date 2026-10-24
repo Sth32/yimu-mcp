@@ -5,7 +5,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { YimuClient, YimuError } from "./api.ts";
 import { encryptPassword } from "./crypto.ts";
-import { renderQrPng, renderQrTerminal, saveQrPng, recognizeQrImage } from "./qr.ts";
+import { renderQrPng, renderQrTerminal, saveQrPng } from "./qr.ts";
 import { prune, projectEntity, sanitizeUser, sanitizeOutput, roundMoney, fmtDate } from "./prune.ts";
 
 type Handler = (args: Record<string, unknown>) => Promise<unknown>;
@@ -280,24 +280,6 @@ export function registerYimuTools(
           setTimeout(resolve, 3000);
           await promise;
         }
-      },
-    },
-    {
-      name: "login_qr_recognize",
-      description:
-        "从 PNG 图片识别二维码内容（免鉴权，测试/自动登录链路校验用）：传入图片路径，返回二维码文本与 session_id。" +
-        "可用于验证 login_qr_start 生成的二维码文件内容是否为 login:<session_id>。",
-      inputSchema: {
-        type: "object",
-        properties: { image_path: { type: "string", description: "PNG 二维码图片文件路径" } },
-        required: ["image_path"],
-        additionalProperties: false,
-      },
-      noAuth: true,
-      handler: async (a) => {
-        const text = await recognizeQrImage(str(a.image_path));
-        const m = /^login:(.+)$/.exec(text);
-        return { text, session_id: m ? m[1] : null, is_login_qr: Boolean(m) };
       },
     },
     {
