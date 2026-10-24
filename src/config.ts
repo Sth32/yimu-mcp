@@ -201,7 +201,7 @@ if (hasFlag("help") || hasFlag("h")) {
 配置文件示例（yimu.config.json）：
   { "token": "<JWT>", "userId": 123456, "qrDir": "C:/temp/yimu-qr" }
 
-MCP 工具：auth_status / login_qr_start / login_qr_poll / login_qr_recognize / login_email / get_me /
+MCP 工具：auth_status / login_qr_start / login_qr_poll / login_email / get_me /
 sync_start / sync_end / sync_pull / get_delete_history / get_bill_count /
 get_book_bills / get_book_last_time / get_share_accounts / get_assets /
 get_account_members / get_account_delete_history / get_currency / get_category_info /
