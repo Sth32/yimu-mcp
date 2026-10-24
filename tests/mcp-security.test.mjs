@@ -54,8 +54,22 @@ test('default tool surface excludes credential exports and the general API escap
   const { client } = await connect(t);
   const { tools } = await client.listTools();
   const names = new Set(tools.map((tool) => tool.name));
-  for (const name of ['get_sts', 'get_sts_no_verify', 'api_request']) assert.equal(names.has(name), false, `${name} must not be registered by default`);
+  for (const name of ['get_sts', 'get_sts_no_verify', 'api_request', 'login_qr_recognize']) assert.equal(names.has(name), false, `${name} must not be registered by default`);
   for (const name of ['login_email', 'login_qr_poll', 'get_me', 'get_bill_count', 'save_bill', 'sync_pull']) assert.equal(names.has(name), true, `${name} must remain usable`);
+});
+
+test('QR recognition of arbitrary host files is not exposed via MCP in any mode', async (t) => {
+  for (const settings of [
+    { token: '', options: undefined },
+    { token: JWT, options: { enableApiRequest: true } },
+  ]) {
+    const { client } = await connect(t, settings);
+    const { tools } = await client.listTools();
+    const names = new Set(tools.map(({ name }) => name));
+    assert.equal(names.has('login_qr_recognize'), false, 'host file QR reader must not be registered');
+    assert.equal(names.has('login_qr_start'), true, 'QR login generation must stay available');
+    assert.equal(names.has('login_qr_poll'), true, 'QR login polling must stay available');
+  }
 });
 
 test('auth_status preserves safe Boolean credential status without disclosing values', async (t) => {
